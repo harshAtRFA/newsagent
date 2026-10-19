@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import logging
 from urllib.error import URLError
+from urllib.parse import quote
 from urllib.request import Request, urlopen
 
 import json
@@ -24,7 +25,7 @@ def fetch_feedback(worker_url: str, export_secret: str) -> dict:
     Returns an empty dict on any failure so the pipeline is never blocked.
     A 403 is logged as ERROR because it always means a secret mismatch.
     """
-    url = f"{worker_url.rstrip('/')}/export?secret={export_secret}"
+    url = f"{worker_url.rstrip('/')}/export?secret={quote(export_secret.strip(), safe='')}"
     try:
         req = Request(url, headers={"Accept": "application/json"})
         with urlopen(req, timeout=EXPORT_TIMEOUT) as resp:
